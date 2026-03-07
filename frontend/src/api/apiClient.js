@@ -1,16 +1,17 @@
 import axios from "axios";
 import toast from "react-hot-toast";
 
-// ── Dynamic API URL based on environment ──────
-// In development: Vite proxy handles /api → localhost:5000
-// In production: Point directly to Vercel backend URL
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "/api/v1";
+// ── Dynamic API URL ───────────────────────────
+// Development → Vite proxy handles it (/api/v1)
+// Production  → Points to your Vercel backend URL
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "/api/v1";
+
+console.log("API Base URL:", API_BASE_URL);
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
   headers: { "Content-Type": "application/json" },
-  timeout: 60000, // AI calls can take time
+  timeout: 60000,
 });
 
 // Response interceptor for global error handling
@@ -52,11 +53,14 @@ export const proposalAPI = {
 // ── Health check ────────────────────────────────
 export const healthAPI = {
   check: () => {
-    // In production, health endpoint is on different domain
-    const healthUrl = import.meta.env.VITE_API_BASE_URL
-      ? import.meta.env.VITE_API_BASE_URL.replace("/api/v1", "/api/health")
-      : "/api/health";
-    return axios.get(healthUrl);
+    const base = import.meta.env.VITE_API_BASE_URL;
+    if (base) {
+      // Production — call Vercel backend directly
+      const healthUrl = base.replace("/api/v1", "/api/health");
+      return axios.get(healthUrl);
+    }
+    // Development — use proxy
+    return axios.get("/api/health");
   },
 };
 

@@ -22,22 +22,29 @@ connectDB();
 
 // ── Security & parsing ───────────────────
 app.use(helmet());
+
+// ── CORS — allow your frontend domain ────
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5000",
+  settings.clientUrl,
+];
+
+// Remove empty strings and duplicates
+const uniqueOrigins = [...new Set(allowedOrigins.filter(Boolean))];
+
 app.use(
   cors({
-    origin: [
-      settings.clientUrl,
-      // Add your Render frontend URL here after deployment
-      "https://your-frontend.onrender.com",
-      "http://localhost:5173",
-    ],
+    origin: uniqueOrigins,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
 app.use(express.json({ limit: "10mb" }));
 
-// Only use morgan in development (Vercel has its own logging)
+// Morgan logging only in development
 if (settings.nodeEnv !== "production") {
   app.use(morgan("dev"));
 }
@@ -48,6 +55,7 @@ app.get("/", (req, res) => {
     message: "Sustainable AI Platform API",
     version: "1.0.0",
     status: "running",
+    documentation: "/api/health",
   });
 });
 
@@ -74,7 +82,8 @@ app.use("/api/v1/whatsapp", whatsappRoutes);
 app.use(notFound);
 app.use(errorHandler);
 
-// ── Start server ONLY when running locally (not on Vercel) ──
+// ── Local development only ────────────────
+// On Vercel, the app is imported by api/index.js — no listen needed
 if (settings.nodeEnv !== "production") {
   app.listen(settings.port, () => {
     logger.info(
@@ -83,5 +92,5 @@ if (settings.nodeEnv !== "production") {
   });
 }
 
-// ── Export for Vercel serverless ───────────
+// ── Export for Vercel ─────────────────────
 export default app;

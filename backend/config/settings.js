@@ -30,23 +30,15 @@ export const settings = {
   logLevel: process.env.LOG_LEVEL || "info",
   logAiPrompts: process.env.LOG_AI_PROMPTS === "true",
 
-  // ── Frontend URL (Render) ───────────────
-  clientUrl:
-    process.env.CLIENT_URL || "http://localhost:5173",
+  // ── Frontend URL ────────────────────────
+  clientUrl: process.env.CLIENT_URL || "http://localhost:5173",
 
   get isProduction() {
     return this.nodeEnv === "production";
   },
 };
 
-// Validate critical settings — warn but don't crash in serverless
+// Warn but don't crash — Vercel needs process alive
 if (!settings.openrouterApiKey) {
-  console.error("WARNING: OPENROUTER_API_KEY is not set in environment");
-  // Don't process.exit() — Vercel needs the process to stay alive
-}
-
-if (!settings.mongodbUri || settings.mongodbUri.includes("localhost")) {
-  console.warn(
-    "WARNING: Using localhost MongoDB URI — this won't work on Vercel. Use MongoDB Atlas."
-  );
+  console.error("WARNING: OPENROUTER_API_KEY is not set");
 }
