@@ -20,7 +20,7 @@ export const connectDB = async () => {
     const conn = await mongoose.connect(settings.mongodbUri, {
       bufferCommands: false,
       maxPoolSize: 10,
-      serverSelectionTimeoutMS: 5000,
+      serverSelectionTimeoutMS: 30000,
       socketTimeoutMS: 45000,
     });
 

@@ -18,8 +18,11 @@ dotenv.config();
 const app = express();
 
 // ── Connect to MongoDB ───────────────────
-connectDB();
-
+// ── Connect to MongoDB before requests ───
+app.use(async (req, res, next) => {
+  await connectDB();
+  next();
+});
 // ── Security & parsing ───────────────────
 app.use(helmet());
 
