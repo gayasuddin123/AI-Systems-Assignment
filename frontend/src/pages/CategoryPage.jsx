@@ -17,54 +17,36 @@ function CategoryPage() {
     setLoading(true);
     setError(null);
     setResult(null);
-
     try {
       const { data } = await categoryAPI.categorize(formData);
       setResult(data.data);
       setHistoryRefresh((k) => k + 1);
       toast.success(
-        `Categorized as "${data.data.primaryCategory}" with ${(
-          data.data.confidenceScore * 100
-        ).toFixed(0)}% confidence`
+        `Categorized as "${data.data.primaryCategory}" — ${(data.data.confidenceScore * 100).toFixed(0)}%`
       );
     } catch (err) {
-      setError(
-        err.response?.data?.error ||
-          err.response?.data?.errors?.[0]?.message ||
-          "Failed to categorize product."
-      );
+      setError(err.response?.data?.error || err.response?.data?.errors?.[0]?.message || "Failed to categorize.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="space-y-8 max-w-5xl mx-auto">
-      {/* Description */}
+    <div className="space-y-4 sm:space-y-6 md:space-y-8 max-w-5xl mx-auto">
       <div className="card bg-green-50 border-green-200">
-        <h3 className="font-semibold text-green-800 mb-1">Module 1</h3>
-        <p className="text-sm text-green-700">
-          Enter a product name and description. AI will auto-assign a primary
-          category, suggest a sub-category, generate 5-10 SEO tags, and
-          evaluate sustainability filters — all returned as structured JSON.
+        <h3 className="font-semibold text-green-800 mb-1 text-sm sm:text-base">Module 1</h3>
+        <p className="text-xs sm:text-sm text-green-700">
+          Enter a product name and description. AI will auto-assign category, sub-category, 
+          SEO tags, and sustainability filters — all as structured JSON.
         </p>
       </div>
 
-      {/* Form */}
       <CategoryForm onSubmit={handleSubmit} isLoading={loading} />
 
-      {/* Loading */}
-      {loading && (
-        <LoadingSpinner text="AI is analyzing your product... This may take a few seconds." />
-      )}
-
-      {/* Error */}
+      {loading && <LoadingSpinner text="AI is analyzing your product..." />}
       {error && <ErrorAlert message={error} onRetry={() => setError(null)} />}
-
-      {/* Result */}
       {result && <CategoryResult result={result} />}
 
-      {/* History */}
       <CategoryHistory refreshKey={historyRefresh} />
     </div>
   );

@@ -1,7 +1,11 @@
 import { useState } from "react";
-import { HiOutlineSparkles, HiOutlineBeaker, HiOutlineSearch } from "react-icons/hi";
+import {
+  HiOutlineSparkles,
+  HiOutlineBeaker,
+  HiOutlineSearch,
+} from "react-icons/hi";
 
-// ── 20 Sample Products ────────────────────────
+// ── Keep your existing 20 SAMPLES array exactly as is ──
 const SAMPLES = [
   {
     label: "🪥 Bamboo Toothbrush",
@@ -216,7 +220,8 @@ const SAMPLES = [
     label: "🧴 Refillable Glass Soap Dispenser",
     category: "Home & Living",
     data: {
-      productName: "Amber Glass Soap Dispenser with Stainless Steel Pump - 500ml",
+      productName:
+        "Amber Glass Soap Dispenser with Stainless Steel Pump - 500ml",
       productDescription:
         "Elegant refillable soap dispenser crafted from thick amber glass with a rust-proof 304 stainless steel pump mechanism. Designed to replace single-use plastic soap bottles permanently. Amber glass protects contents from UV degradation. Compatible with liquid hand soap, dish soap, lotion, or shampoo. Wide mouth for easy refilling. Silicone gasket seal prevents leaks. Includes waterproof vinyl label and chalk pen for customization. Comes with a starter pack of concentrated castile soap tablet (makes 500ml). Packaged in molded recycled paper pulp.",
       material: "amber glass, 304 stainless steel, silicone gasket",
@@ -252,7 +257,6 @@ function CategoryForm({ onSubmit, isLoading }) {
     setSampleSearch("");
   };
 
-  // Filter samples by search text
   const filteredSamples = SAMPLES.filter(
     (s) =>
       s.label.toLowerCase().includes(sampleSearch.toLowerCase()) ||
@@ -263,8 +267,9 @@ function CategoryForm({ onSubmit, isLoading }) {
 
   return (
     <form onSubmit={handleSubmit} className="card">
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-semibold text-gray-800">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 sm:mb-6">
+        <h3 className="text-base sm:text-lg font-semibold text-gray-800">
           Product Information
         </h3>
 
@@ -273,13 +278,12 @@ function CategoryForm({ onSubmit, isLoading }) {
           <button
             type="button"
             onClick={() => setShowSamples(!showSamples)}
-            className="btn-secondary text-sm py-1.5 flex items-center gap-2"
+            className="btn-secondary text-sm py-1.5 flex items-center gap-2 w-full sm:w-auto justify-center"
           >
             <HiOutlineBeaker className="w-4 h-4" />
             Load Sample ({SAMPLES.length})
           </button>
 
-          {/* Dropdown */}
           {showSamples && (
             <>
               <div
@@ -289,12 +293,11 @@ function CategoryForm({ onSubmit, isLoading }) {
                   setSampleSearch("");
                 }}
               />
-              <div className="absolute right-0 mt-2 w-96 bg-white rounded-xl shadow-lg border border-gray-200 z-20 overflow-hidden">
-                {/* Header with search */}
-                <div className="p-3 bg-gray-50 border-b border-gray-200">
+              {/* Dropdown — full width on mobile, fixed width on desktop */}
+              <div className="fixed inset-x-3 top-24 sm:absolute sm:inset-x-auto sm:top-auto sm:right-0 sm:mt-2 sm:w-96 bg-white rounded-xl shadow-lg border border-gray-200 z-20 overflow-hidden max-h-[70vh] sm:max-h-[80vh] flex flex-col">
+                <div className="p-3 bg-gray-50 border-b border-gray-200 flex-shrink-0">
                   <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
-                    Choose a sample product ({filteredSamples.length} of{" "}
-                    {SAMPLES.length})
+                    Choose a sample ({filteredSamples.length}/{SAMPLES.length})
                   </p>
                   <div className="relative">
                     <HiOutlineSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -305,12 +308,12 @@ function CategoryForm({ onSubmit, isLoading }) {
                       onChange={(e) => setSampleSearch(e.target.value)}
                       className="w-full pl-9 pr-3 py-2 text-sm border border-gray-300 rounded-lg 
                                  focus:border-primary-500 focus:ring-1 focus:ring-primary-200 outline-none"
+                      autoFocus
                     />
                   </div>
                 </div>
 
-                {/* Sample list */}
-                <div className="max-h-80 overflow-y-auto">
+                <div className="overflow-y-auto flex-1">
                   {filteredSamples.length === 0 ? (
                     <div className="px-4 py-6 text-center text-sm text-gray-400">
                       No samples match your search.
@@ -322,13 +325,13 @@ function CategoryForm({ onSubmit, isLoading }) {
                         type="button"
                         onClick={() => loadSample(sample)}
                         className="w-full text-left px-4 py-3 hover:bg-primary-50 
-                                   transition-colors border-b border-gray-100 last:border-0"
+                                   transition-colors border-b border-gray-100 last:border-0 active:bg-primary-100"
                       >
-                        <div className="flex items-center justify-between">
-                          <p className="font-medium text-gray-800 text-sm">
+                        <div className="flex items-center justify-between gap-2">
+                          <p className="font-medium text-gray-800 text-sm truncate">
                             {sample.label}
                           </p>
-                          <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full ml-2 flex-shrink-0">
+                          <span className="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full flex-shrink-0">
                             {sample.category}
                           </span>
                         </div>
@@ -345,7 +348,7 @@ function CategoryForm({ onSubmit, isLoading }) {
         </div>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-3 sm:space-y-4">
         {/* Product Name */}
         <div>
           <label htmlFor="productName" className="label">
@@ -375,23 +378,21 @@ function CategoryForm({ onSubmit, isLoading }) {
             name="productDescription"
             value={form.productDescription}
             onChange={handleChange}
-            placeholder="Detailed description of the product including materials, features, and sustainability attributes..."
-            className="input-field min-h-[120px] resize-y"
+            placeholder="Detailed description including materials, features, sustainability..."
+            className="input-field min-h-[100px] sm:min-h-[120px] resize-y"
             required
             minLength={10}
             maxLength={5000}
           />
           <p className="text-xs text-gray-400 mt-1">
-            {form.productDescription.length}/5000 characters
+            {form.productDescription.length}/5000
           </p>
         </div>
 
-        {/* Material & Brand Row */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Material & Brand */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <div>
-            <label htmlFor="material" className="label">
-              Material(s)
-            </label>
+            <label htmlFor="material" className="label">Material(s)</label>
             <input
               id="material"
               name="material"
@@ -403,9 +404,7 @@ function CategoryForm({ onSubmit, isLoading }) {
             />
           </div>
           <div>
-            <label htmlFor="brand" className="label">
-              Brand
-            </label>
+            <label htmlFor="brand" className="label">Brand</label>
             <input
               id="brand"
               name="brand"
@@ -419,8 +418,8 @@ function CategoryForm({ onSubmit, isLoading }) {
         </div>
       </div>
 
-      {/* Submit */}
-      <div className="mt-6 flex items-center gap-4">
+      {/* Buttons */}
+      <div className="mt-5 sm:mt-6 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4">
         <button
           type="submit"
           disabled={
@@ -428,7 +427,7 @@ function CategoryForm({ onSubmit, isLoading }) {
             !form.productName.trim() ||
             form.productDescription.length < 10
           }
-          className="btn-primary flex items-center gap-2"
+          className="btn-primary flex items-center justify-center gap-2"
         >
           <HiOutlineSparkles className="w-5 h-5" />
           {isLoading ? "Analyzing..." : "Generate Categories & Tags"}
